@@ -41,7 +41,9 @@ static const char *report_mode_str[] = {
   "ANGLEREPORT",  // Alias 2
   "IQREPORT",     // Default
   "IQ_REPORT",    // Alias 1
-  "IQ"            // Alias 2
+  "IQ",           // Alias 2
+  "HYBRID",       // both IQ and Angle
+  "BOTH"          // Alias 1
 };
 
 static const aoa_report_mode_t report_mode_enum[] = {
@@ -50,7 +52,9 @@ static const aoa_report_mode_t report_mode_enum[] = {
   ANGLE_REPORT,
   IQ_REPORT,
   IQ_REPORT,
-  IQ_REPORT
+  IQ_REPORT,
+  HYBRID,
+  HYBRID
 };
 
 #define REPORT_MODE_COUNT    (sizeof(report_mode_str) / sizeof(report_mode_str[0]))
