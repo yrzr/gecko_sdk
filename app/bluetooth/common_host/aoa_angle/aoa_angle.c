@@ -27,6 +27,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  *
  ******************************************************************************/
+#include <sys/time.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -468,6 +469,16 @@ enum sl_rtl_error_code aoa_calculate(aoa_state_t *aoa_state,
       ec = sl_rtl_aox_clear_expected_direction(&aoa_state->libitem);
     }
   }
+
+  // Copy iq timestamp_usec
+  angle->iq_timestamp_usec = iq_report->timestamp_usec;
+
+  // get UNIX timestamp and store it in angle
+  struct timeval tv;
+  if (gettimeofday(&tv, NULL) == 0) {
+    angle->angle_timestamp_usec = tv.tv_sec + tv.tv_usec / 1000000.0;
+  }
+
   return ec;
 }
 

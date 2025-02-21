@@ -47,6 +47,8 @@ typedef struct aoa_iq_report_s {
 } aoa_iq_report_t;
 
 typedef struct aoa_angle_s {
+  double iq_timestamp_usec;
+  double angle_timestamp_usec;
   float azimuth;
   float azimuth_stdev;
   float elevation;
