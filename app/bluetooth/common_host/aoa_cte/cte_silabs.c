@@ -27,6 +27,9 @@
  * 3. This notice may not be removed or altered from any source distribution.
  *
  ******************************************************************************/
+
+#include <sys/time.h>
+ 
 #include "sl_bt_api.h"
 #include "sl_ncp_evt_filter_common.h"
 #include "aoa_cte.h"
@@ -111,6 +114,12 @@ sl_status_t cte_bt_on_event_silabs(sl_bt_msg_t *evt)
         if (SL_STATUS_OK != sc) {
           break;
         }
+      }
+
+      // get UNIX timestamp and store it in iq_report
+      struct timeval tv;
+      if (gettimeofday(&tv, NULL) == 0) {
+        iq_report.timestamp_usec = tv.tv_sec + tv.tv_usec / 1000000.0;
       }
 
       // Convert event to common IQ report format.
