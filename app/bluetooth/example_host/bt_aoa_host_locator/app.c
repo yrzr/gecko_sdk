@@ -447,13 +447,33 @@ void aoa_cte_on_iq_report(aoa_db_entry_t *tag, aoa_iq_report_t *iq_report)
   enum sl_rtl_error_code ec;
   aoa_angle_t angle;
 
-  if (report_mode == IQ_REPORT) {
+  if (report_mode == IQ_REPORT || report_mode == HYBRID) {
     size = sizeof(AOA_TOPIC_IQ_REPORT_PRINT);
     topic_template = AOA_TOPIC_IQ_REPORT_PRINT;
 
     // Compile payload
     sc = aoa_serialize_iq_report(iq_report, &payload);
-  } else {
+
+    app_assert(sc == SL_STATUS_OK,
+      "[E: 0x%04x] Failed to serialize the payload." APP_LOG_NL,
+      (int)sc);
+
+    // Compile topic
+    size += (2 * sizeof(aoa_id_t));
+    topic = malloc(size);
+    app_assert(NULL != topic, "Failed to allocate memory for the MQTT topic.");
+    aoa_address_to_id(tag->address.addr, tag->address_type, tag_id);
+    snprintf(topic, size, topic_template, locator_id, tag_id);
+
+    // Send message
+    sc = mqtt_publish(&mqtt_handle, topic, payload, false);
+    app_assert_status(sc);
+
+    // Clean up
+    free(payload);
+    free(topic);
+  } 
+  if (report_mode == ANGLE_REPORT || report_mode == HYBRID) {
     size = sizeof(AOA_TOPIC_ANGLE_PRINT);
     topic_template = AOA_TOPIC_ANGLE_PRINT;
 
@@ -475,25 +495,26 @@ void aoa_cte_on_iq_report(aoa_db_entry_t *tag, aoa_iq_report_t *iq_report)
 
     // Compile payload
     sc = aoa_serialize_angle(&angle, &payload);
+
+    app_assert(sc == SL_STATUS_OK,
+      "[E: 0x%04x] Failed to serialize the payload." APP_LOG_NL,
+      (int)sc);
+
+    // Compile topic
+    size += (2 * sizeof(aoa_id_t));
+    topic = malloc(size);
+    app_assert(NULL != topic, "Failed to allocate memory for the MQTT topic.");
+    aoa_address_to_id(tag->address.addr, tag->address_type, tag_id);
+    snprintf(topic, size, topic_template, locator_id, tag_id);
+
+    // Send message
+    sc = mqtt_publish(&mqtt_handle, topic, payload, false);
+    app_assert_status(sc);
+
+    // Clean up
+    free(payload);
+    free(topic);
   }
-  app_assert(sc == SL_STATUS_OK,
-             "[E: 0x%04x] Failed to serialize the payload." APP_LOG_NL,
-             (int)sc);
-
-  // Compile topic
-  size += (2 * sizeof(aoa_id_t));
-  topic = malloc(size);
-  app_assert(NULL != topic, "Failed to allocate memory for the MQTT topic.");
-  aoa_address_to_id(tag->address.addr, tag->address_type, tag_id);
-  snprintf(topic, size, topic_template, locator_id, tag_id);
-
-  // Send message
-  sc = mqtt_publish(&mqtt_handle, topic, payload, false);
-  app_assert_status(sc);
-
-  // Clean up
-  free(payload);
-  free(topic);
 }
 
 /**************************************************************************//**
