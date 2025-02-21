@@ -127,9 +127,9 @@ sl_status_t aoa_serialize_angle(aoa_angle_t *angle, char **str)
   cJSON *obj = NULL;
   cJSON *root = cJSON_CreateObject();
   CHECK_NULL_RETURN(root, SL_STATUS_FAIL);
-  obj = cJSON_AddNumberToObject(root, "iq_timestamp_usec", (double)angle->iq_timestamp_usec);
+  obj = cJSON_AddNumberToObject(root, "iq_timestamp", (double)angle->iq_timestamp_usec);
   CHECK_NULL_RETURN(obj, SL_STATUS_FAIL);
-  obj = cJSON_AddNumberToObject(root, "angle_timestamp_usec", (double)angle->angle_timestamp_usec);
+  obj = cJSON_AddNumberToObject(root, "angle_timestamp", (double)angle->angle_timestamp_usec);
   CHECK_NULL_RETURN(obj, SL_STATUS_FAIL);
   obj = cJSON_AddNumberToObject(root, "azimuth", (double)angle->azimuth);
   CHECK_NULL_RETURN(obj, SL_STATUS_FAIL);
@@ -160,10 +160,10 @@ sl_status_t aoa_deserialize_angle(char *str, aoa_angle_t *angle)
   }
   cJSON *root = cJSON_Parse(str);
   CHECK_TYPE(root, cJSON_Object);
-  cJSON *param = cJSON_GetObjectItem(root, "iq_timestamp_usec");
+  cJSON *param = cJSON_GetObjectItem(root, "iq_timestamp");
   CHECK_TYPE(param, cJSON_Number);
   angle->iq_timestamp_usec = (float)param->valuedouble;
-  param = cJSON_GetObjectItem(root, "angle_timestamp_usec");
+  param = cJSON_GetObjectItem(root, "angle_timestamp");
   CHECK_TYPE(param, cJSON_Number);
   angle->angle_timestamp_usec = (double)param->valuedouble;
   param = cJSON_GetObjectItem(root, "azimuth");
