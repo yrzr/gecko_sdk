@@ -28,6 +28,8 @@
  *
  ******************************************************************************/
 
+#include <sys/time.h>
+
 #include "sl_bt_api.h"
 #include "aoa_cte.h"
 #include "aoa_util.h"
@@ -166,6 +168,12 @@ sl_status_t cte_bt_on_event_conn_less(sl_bt_msg_t *evt)
       if (aoa_db_get_tag_by_handle(evt->data.evt_cte_receiver_connectionless_iq_report.sync, &tag) == SL_STATUS_NOT_FOUND) {
         // Unknown tag, proceed with execution.
         break;
+      }
+
+      // get UNIX timestamp and store it in iq_report
+      struct timeval tv;
+      if (gettimeofday(&tv, NULL) == 0) {
+        iq_report.timestamp_usec = tv.tv_sec + tv.tv_usec / 1000000.0;
       }
 
       // Convert event to common IQ report format.

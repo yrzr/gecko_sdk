@@ -38,6 +38,7 @@
 typedef char aoa_id_t[AOA_ID_MAX_SIZE];
 
 typedef struct aoa_iq_report_s {
+  double timestamp_usec;
   uint8_t channel;
   int8_t rssi;
   uint16_t event_counter;
