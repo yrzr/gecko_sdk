@@ -57,6 +57,8 @@ sl_status_t aoa_serialize_iq_report(aoa_iq_report_t *iq_report, char **str)
   CHECK_NULL_RETURN(root, SL_STATUS_FAIL);
   cJSON *samples = cJSON_CreateArray();
   CHECK_NULL_RETURN(samples, SL_STATUS_FAIL);
+  obj = cJSON_AddNumberToObject(root, "timestamp", (double)iq_report->timestamp_usec);
+  CHECK_NULL_RETURN(obj, SL_STATUS_FAIL);
   obj = cJSON_AddNumberToObject(root, "channel", (int)iq_report->channel);
   CHECK_NULL_RETURN(obj, SL_STATUS_FAIL);
   obj = cJSON_AddNumberToObject(root, "rssi", (int)iq_report->rssi);
@@ -92,6 +94,9 @@ sl_status_t aoa_deserialize_iq_report(char *str, aoa_iq_report_t *iq_report)
   CHECK_TYPE(samples, cJSON_Array);
   cJSON *param = NULL;
   uint8_t length = 0;
+  param = cJSON_GetObjectItem(root, "timestamp");
+  CHECK_TYPE(param, cJSON_Number);
+  iq_report->timestamp_usec = (uint64_t)param->valuedouble;
   param = cJSON_GetObjectItem(root, "channel");
   CHECK_TYPE(param, cJSON_Number);
   iq_report->channel = (uint8_t)param->valueint;
